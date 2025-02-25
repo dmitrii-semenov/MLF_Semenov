@@ -111,4 +111,4 @@ plt.scatter(x[:,0], x[:,1])
 plt.scatter(values[:,0], values[:,1], color='red')
 plt.axis('equal')
 plt.show()
-# %%
+#%%
