@@ -144,24 +144,17 @@ plt.show()
 
 def compress_image(image: np.ndarray, number_of_colours: int) -> np.ndarray:
     # Compresses the given image by reducing the number of colours used in the image.
-
-    # Get original shape of the image
     original_shape = image.shape
-    
-    # Reshape image into a 2D array (pixels x color channels)
     reshaped_image = image.reshape((-1, original_shape[2]))
 
-    # Apply K-means clustering to find dominant colours
-    kmeans = KMeans(n_clusters=number_of_colours, random_state=42, n_init=10)
+    # Apply K-means clustering to find colours
+    kmeans = KMeans(n_clusters=number_of_colours)
     kmeans.fit(reshaped_image)
 
     # Get cluster centroids and convert them to integers (new colours)
-    new_colours = np.round(kmeans.cluster_centers_).astype(np.uint8)
-
-    # Replace original pixel values with their nearest centroid
+    new_colours = np.round(kmeans.cluster_centers_)
+    new_colours = np.uint8(new_colours)
     compressed_image = new_colours[kmeans.labels_]
-
-    # Reshape back to the original image shape
     compressed_image = compressed_image.reshape(original_shape)
 
     return compressed_image
