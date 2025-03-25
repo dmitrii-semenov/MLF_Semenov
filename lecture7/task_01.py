@@ -9,6 +9,7 @@ from keras.utils import to_categorical
 from keras.optimizers import Adam
 from keras.regularizers import l1, l2
 from keras.callbacks import EarlyStopping
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -59,7 +60,7 @@ model.add(Dense(128, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 #model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.005)))
 #model.add(Dense(10, activation='softmax', kernel_regularizer=l2(0.005)))
-#model.add(Dropout(0.2))
+#model.add(Dropout(0.1))
 
 # Check model description 
 print(model.summary())
@@ -69,7 +70,7 @@ optimizer = Adam(learning_rate = 0.001)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 # Early stopping
-early_stopping = EarlyStopping(monitor='val_loss', patience=3)
+early_stopping = EarlyStopping(monitor='val_loss', patience=2)
 
 # Train model
 history = model.fit(X_train, y_train, epochs=10, batch_size=128, validation_split = 0.2)
@@ -96,6 +97,21 @@ plt.show()
 score = model.evaluate(X_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print(f'Test accuracy: {score[1]*100} %')
+
+# Generate predictions on test data
+y_pred = model.predict(X_test)
+y_pred_classes = np.argmax(y_pred, axis=1)
+y_true = np.argmax(y_test, axis=1)
+
+# Compute confusion matrix
+cm = confusion_matrix(y_true, y_pred_classes)
+
+# Plot confusion matrix
+plt.figure(figsize=(10, 8))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=[str(i) for i in range(10)])
+disp.plot(cmap='Blues', values_format='d')
+plt.title('Confusion Matrix - MNIST Test Data')
+plt.show()
 
 # Tested with dropout 0.1 and 0.2 => accuracy is around 80-90%, BUT validation accuracy is still around 98.5%, better without it
 # Added EarlyStopping with patience 3 => accuracy is nearly the same, prevent overfitting
