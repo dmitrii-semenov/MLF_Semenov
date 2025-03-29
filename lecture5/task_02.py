@@ -60,7 +60,7 @@ history = model.fit(X_train, y_train,
                     epochs=40, batch_size=4, 
                     verbose=1, validation_data = (X_val,y_val))
 
-# EPreprocessing for validation
+# Preprocessing for validation
 x_test.replace('?', np.nan, inplace=True)
 x_test.fillna(x_test.mode().iloc[0],inplace=True)
 x_te = pd.get_dummies(x_test)
